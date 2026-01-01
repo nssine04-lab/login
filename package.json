@@ -1,0 +1,16 @@
+{
+  "name": "google-auth",
+  "version": "1.0.0",
+  "description": "Appwrite Function for native Google Sign-In authentication",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "node src/main.js"
+  },
+  "dependencies": {
+    "node-appwrite": "^14.0.0",
+    "google-auth-library": "^9.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

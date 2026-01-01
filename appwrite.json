@@ -1,0 +1,11 @@
+{
+  "$schema": "https://appwrite.io/schemas/functions/config.json",
+  "name": "google-auth",
+  "runtime": "node-18.0",
+  "entrypoint": "src/main.js",
+  "commands": "npm install",
+  "permissions": [],
+  "events": [],
+  "schedule": "",
+  "timeout": 30
+}
