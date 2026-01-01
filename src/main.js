@@ -98,26 +98,36 @@ module.exports = async ({ req, res, log, error }) => {
       }
     }
 
-    // Create a session for the user
+    // Create a magic URL token for the user to create a session
     try {
-      log('🔑 Creating session...');
+      log('🔑 Creating session token...');
       
-      // Create a JWT token that can be used to authenticate
-      const jwt = await users.createJWT(appwriteUser.$id);
+      // Create a token that the client can use to create a session
+      // Using createToken with a custom secret
+      const token = await users.createToken(appwriteUser.$id);
       
-      log('✅ Session created successfully');
+      log('✅ Token created successfully');
 
       return res.json({
         success: true,
         userId: appwriteUser.$id,
         email: email,
-        jwt: jwt.jwt,
+        token: token.secret,
         message: 'Login successful'
       });
 
     } catch (e) {
-      error('❌ Error creating session: ' + e.message);
-      return res.json({ success: false, error: 'Failed to create session: ' + e.message });
+      error('❌ Error creating token: ' + e.message);
+      
+      // Fallback: return user info without token
+      // Client will need to use OAuth2 to complete login
+      return res.json({
+        success: true,
+        userId: appwriteUser.$id,
+        email: email,
+        needsOAuth: true,
+        message: 'User created, needs OAuth to complete login'
+      });
     }
 
   } catch (e) {
