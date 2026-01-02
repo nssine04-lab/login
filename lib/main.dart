@@ -183,14 +183,15 @@ Future<dynamic> _handleGoogleNativeSignIn(
               collectionId: usersCollection!,
               documentId: appwriteUserId,
               data: {
-                'name': verifiedName,
-                'lastname': '',
+                'name': verifiedName.split(' ').first,
+                'lastname': verifiedName.split(' ').length > 1 
+                    ? verifiedName.split(' ').sublist(1).join(' ') 
+                    : '',
                 'email': verifiedEmail,
                 'phone': '',
                 'role': 'buyer',
                 'kyc_status': 'none',
                 'is_subscribed': false,
-                'profile_image': verifiedPicture ?? '',
                 'created_at': DateTime.now().toUtc().toIso8601String(),
               },
             );
