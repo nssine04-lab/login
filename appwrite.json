@@ -1,11 +1,24 @@
 {
-  "$schema": "https://appwrite.io/schemas/functions/config.json",
-  "name": "google-auth",
-  "runtime": "node-18.0",
-  "entrypoint": "src/main.js",
-  "commands": "npm install",
-  "permissions": [],
+  "$id": "google-auth",
+  "name": "Google Auth (Dart)",
+  "runtime": "dart-3.3",
+  "execute": ["any"],
   "events": [],
   "schedule": "",
-  "timeout": 30
+  "timeout": 15,
+  "enabled": true,
+  "logging": true,
+  "entrypoint": "lib/main.dart",
+  "commands": "dart pub get",
+  "scopes": [
+    "users.read",
+    "users.write",
+    "documents.read",
+    "documents.write"
+  ],
+  "vars": {
+    "APPWRITE_ENDPOINT": "https://fra.cloud.appwrite.io/v1",
+    "DATABASE_ID": "695534670020c39eb399",
+    "USERS_COLLECTION": "users"
+  }
 }
