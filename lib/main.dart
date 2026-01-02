@@ -149,6 +149,44 @@ Future<dynamic> _handleGoogleNativeSignIn(
           context.log('⚠️ Failed to verify existing user email: $e');
         }
       }
+
+      // Check if user document exists, create if missing
+      if (databaseId != null && usersCollection != null) {
+        try {
+          await databases.getDocument(
+            databaseId: databaseId!,
+            collectionId: usersCollection!,
+            documentId: appwriteUserId,
+          );
+          context.log('✅ User document already exists');
+        } catch (e) {
+          context.log('⚠️ User document not found, creating...');
+          try {
+            await databases.createDocument(
+              databaseId: databaseId!,
+              collectionId: usersCollection!,
+              documentId: appwriteUserId,
+              data: {
+                'name': verifiedName.split(' ').first,
+                'lastname': verifiedName.split(' ').length > 1 
+                    ? verifiedName.split(' ').sublist(1).join(' ') 
+                    : '',
+                'email': verifiedEmail,
+                'phone': '',
+                'role': 'buyer',
+                'kyc_status': 'none',
+                'is_subscribed': false,
+                'created_at': DateTime.now().toUtc().toIso8601String(),
+              },
+            );
+            context.log('✅ User document created for existing user');
+          } catch (createError) {
+            context.log('⚠️ Error creating user document: $createError');
+          }
+        }
+      } else {
+        context.log('⚠️ DATABASE_ID or USERS_COLLECTION not set - databaseId: $databaseId, usersCollection: $usersCollection');
+      }
     } else {
       // Step 3: Create new user
       context.log('🆕 Creating new user...');
@@ -177,6 +215,7 @@ Future<dynamic> _handleGoogleNativeSignIn(
 
         // Create user document in database
         if (databaseId != null && usersCollection != null) {
+          context.log('📝 Creating user document... databaseId: $databaseId, usersCollection: $usersCollection');
           try {
             await databases.createDocument(
               databaseId: databaseId!,
@@ -199,6 +238,8 @@ Future<dynamic> _handleGoogleNativeSignIn(
           } catch (e) {
             context.log('⚠️ Error creating user document: $e');
           }
+        } else {
+          context.log('⚠️ DATABASE_ID or USERS_COLLECTION not set - databaseId: $databaseId, usersCollection: $usersCollection');
         }
       } catch (e) {
         if (e is AppwriteException && e.code == 409) {
