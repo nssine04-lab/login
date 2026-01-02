@@ -209,10 +209,9 @@ Future<dynamic> _handleGoogleNativeSignIn(
     context.log('🎫 Creating session token...');
 
     try {
+      // createToken creates a token that can be used with account.createSession()
       final token = await users.createToken(
         userId: appwriteUserId,
-        length: 64,
-        expire: 60 * 60 * 24 * 30, // 30 days
       );
 
       context.log('✅ Session token created');
