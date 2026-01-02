@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dart_appwrite/dart_appwrite.dart';
+import 'package:dart_appwrite/models.dart' as models;
 
 final String? endpoint = Platform.environment['APPWRITE_ENDPOINT'];
 final String? projectId = Platform.environment['APPWRITE_FUNCTION_PROJECT_ID'];
@@ -108,7 +109,7 @@ Future<dynamic> _handleGoogleNativeSignIn(
     context.log('✅ Google token verified for: $verifiedEmail');
 
     // Step 2: Check if user already exists
-    User? existingUser;
+    models.User? existingUser;
     try {
       final usersList = await users.list(
         queries: [Query.equal('email', verifiedEmail)],
