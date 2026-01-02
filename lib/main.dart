@@ -14,6 +14,15 @@ Client _adminClient() => Client()
   ..setProject(projectId ?? '')
   ..setKey(apiKey ?? '');
 
+/// Helper to return JSON response
+dynamic _jsonResponse(dynamic context, Map<String, dynamic> data, {int statusCode = 200}) {
+  return context.res.send(
+    jsonEncode(data),
+    statusCode,
+    {'content-type': 'application/json'},
+  );
+}
+
 // Entry point for Appwrite Function
 Future<dynamic> main(final context) async {
   try {
@@ -49,20 +58,20 @@ Future<dynamic> main(final context) async {
         return await _handleGoogleNativeSignIn(context, data);
       }
 
-      return context.res.json({
+      return _jsonResponse(context, {
         'status': 'error',
         'message': 'Unknown action type',
-      }, status: 400);
+      }, statusCode: 400);
     }
 
-    return context.res.json({'status': 'ok', 'message': 'Trigger ignored'});
+    return _jsonResponse(context, {'status': 'ok', 'message': 'Trigger ignored'});
   } catch (e, stack) {
     context.error('❌ Function error: $e');
     context.error('Stack trace: $stack');
-    return context.res.json({
+    return _jsonResponse(context, {
       'status': 'error',
       'message': e.toString(),
-    }, status: 500);
+    }, statusCode: 500);
   }
 }
 
@@ -82,10 +91,10 @@ Future<dynamic> _handleGoogleNativeSignIn(
   final String? picture = payload['picture'] ?? payload['photoUrl'];
 
   if (idToken == null || idToken.isEmpty) {
-    return context.res.json({
+    return _jsonResponse(context, {
       'status': 'error',
       'message': 'Google ID token is required',
-    }, status: 400);
+    }, statusCode: 400);
   }
 
   context.log('🔐 Verifying Google ID token...');
@@ -95,10 +104,10 @@ Future<dynamic> _handleGoogleNativeSignIn(
     final googleUserInfo = await _verifyGoogleToken(idToken, context);
 
     if (googleUserInfo == null) {
-      return context.res.json({
+      return _jsonResponse(context, {
         'status': 'error',
         'message': 'Invalid Google token',
-      }, status: 401);
+      }, statusCode: 401);
     }
 
     final String verifiedEmail = googleUserInfo['email'] ?? email ?? '';
@@ -209,20 +218,19 @@ Future<dynamic> _handleGoogleNativeSignIn(
     context.log('🎫 Creating session token...');
 
     try {
-      // createToken creates a token that can be used with account.createSession()
       final token = await users.createToken(
         userId: appwriteUserId,
       );
 
       context.log('✅ Session token created');
 
-      return context.res.json({
+      return _jsonResponse(context, {
         'status': 'ok',
         'success': true,
         'user_id': appwriteUserId,
-        'userId': appwriteUserId, // For compatibility
+        'userId': appwriteUserId,
         'secret': token.secret,
-        'token': token.secret, // For compatibility
+        'token': token.secret,
         'expire': token.expire,
         'email': verifiedEmail,
         'name': verifiedName,
@@ -231,7 +239,7 @@ Future<dynamic> _handleGoogleNativeSignIn(
     } catch (e) {
       context.error('❌ Failed to create session token: $e');
 
-      return context.res.json({
+      return _jsonResponse(context, {
         'status': 'partial',
         'success': true,
         'user_id': appwriteUserId,
@@ -244,10 +252,10 @@ Future<dynamic> _handleGoogleNativeSignIn(
     }
   } catch (e) {
     context.error('❌ Google Sign-In error: $e');
-    return context.res.json({
+    return _jsonResponse(context, {
       'status': 'error',
       'message': 'Google Sign-In failed: $e',
-    }, status: 500);
+    }, statusCode: 500);
   }
 }
 
