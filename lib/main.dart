@@ -184,10 +184,11 @@ Future<dynamic> _handleGoogleNativeSignIn(
               documentId: appwriteUserId,
               data: {
                 'name': verifiedName,
+                'lastname': '',
                 'email': verifiedEmail,
                 'phone': '',
                 'role': 'buyer',
-                'kyc_status': 'pending',
+                'kyc_status': 'none',
                 'is_subscribed': false,
                 'profile_image': verifiedPicture ?? '',
                 'created_at': DateTime.now().toUtc().toIso8601String(),
