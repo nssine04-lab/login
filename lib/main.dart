@@ -190,6 +190,7 @@ Future<dynamic> _handleGoogleNativeSignIn(
                 'kyc_status': 'pending',
                 'is_subscribed': false,
                 'profile_image': verifiedPicture ?? '',
+                'created_at': DateTime.now().toUtc().toIso8601String(),
               },
             );
             context.log('✅ User document created');
