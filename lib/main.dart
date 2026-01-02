@@ -185,6 +185,7 @@ Future<dynamic> _handleGoogleNativeSignIn(
               data: {
                 'name': verifiedName,
                 'email': verifiedEmail,
+                'phone': '',
                 'role': 'buyer',
                 'kyc_status': 'pending',
                 'is_subscribed': false,
